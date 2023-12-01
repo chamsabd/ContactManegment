@@ -86,7 +86,7 @@ sprintf(buffer, "%d",c->ntlf);
 printf("donner adresse avec longeur sup a 5\n");
 scanf(" %[^\n]",c->adresse);
 }while(strlen((char*)c->adresse)<5);
-printf("done");
+
 }
 
 
@@ -94,9 +94,9 @@ void ajouter_contact(FILE *fichier,liste* L){
 cellule *c,*parcours;
 c=(cellule*) malloc(sizeof(cellule) );
 lire_contact(&c->val);
-fprintf(fichier, "%s-%d-%s-%s\n",c->val.nom,c->val.ntlf,c->val.adresse,c->val.email);
-printf("done:");
-printf("%d",c->val.ntlf);
+fprintf(fichier,"%s-%d-%s-%s\n",c->val.nom,c->val.ntlf,c->val.adresse,c->val.email);
+printf("=>contacte enregistrer avec succes \n");
+
 if (*L == NULL)
 {
 printf("L NULL");
@@ -105,31 +105,27 @@ printf("L NULL");
 }
 else
 {
-printf("L != NULL");
+
 parcours = *L;
 while ( parcours->next !=NULL)
 {
 parcours = parcours->next ;
 }
 parcours->next= c ;
-
-
+printf("=>contacte ajouter a la liste avec succes \n");
  }
 
-
-
-printf("ajouter_contact");
 fclose(fichier);
 }
 
-void search_contact(FILE *fichier){
-    contact contacts;
+void search_contact(liste* L){
+
  printf("search_contact");
 }
-void edit_contact(FILE *fichier){
+void edit_contact(FILE *fichier,liste* L){
  printf("edit_contact");
 }
-void delete_contact(FILE *fichier){
+void delete_contact(FILE *fichier,liste* L){
  printf("delete_contact");
 }
 int main(){
@@ -159,9 +155,9 @@ while(q==0){
       switch(s){
          case 1: ajouter_contact(fichier,&L); break;
          case 2:lister_contacts(&L); break;
-         case 3:search_contact(fichier); break;
-         case 4:edit_contact(fichier); break;
-         case 5: delete_contact(fichier); break;
+         case 3:search_contact(&L); break;
+         case 4:edit_contact(fichier,&L); break;
+         case 5: delete_contact(fichier,&L); break;
          case 0: q=1; break;
          default : printf("merci de choisir depuis le menu \n");
 
