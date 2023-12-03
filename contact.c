@@ -17,7 +17,7 @@ struct cellule * next;
 
 
 typedef  cellule*liste;
-
+//hathi bech ta5ou les contact ili fil fichier w t7othoum fil liste chainee
 void initialiser_liste(FILE *fichier,liste* L){
 *L=NULL;
   if (fichier == NULL) {
@@ -57,6 +57,8 @@ parcours->next= c ;
     }
 
 }
+
+//hathi bech taffichi les contact el kol
 void lister_contacts (liste * L){
 cellule * p ;
 
@@ -71,7 +73,7 @@ p = p->next;
 printf("\n");
 }
 
-
+//hathi bech ta9ra el contact ili 3taha el utilisateur w thabet ili houma s7a7
 void lire_contact(contact * c){
     char buffer[20];  // Assurez-vous que la taille du tampon est suffisamment grande
     do{
@@ -95,7 +97,7 @@ scanf(" %[^\n]",c->adresse);
 
 }
 
-
+//hathi bech tajouti el contact fi a5er el liste chainne  w tzidou zada fil fichier
 void ajouter_contact(FILE *fichier,liste* L){
 cellule *c,*parcours;
 c=(cellule*) malloc(sizeof(cellule) );
@@ -123,21 +125,24 @@ printf("=>contacte ajouter a la liste avec succes \n");
 
 fclose(fichier);
 }
-
+//hathi bech tlawej ala contact 7asm num tlf w traja3ou w jedna * fi type de retour 5ater el contact ili bech traj3ou n7ebou nbadlou fih 
 cellule* find_contact(liste* L ){
     int ntlf;
 printf("donner le ntlf du contact a chercher\n");
 scanf("%d",&ntlf);
 }
-
+//hathi bech ta5ou find contact w tafichih kanou mawjoud makanech t9olek contact n'existe pas
 void search_contact(liste* L ){
 
  printf("search_contact");
 }
+//hathi bech ta5ou el find contact w kan l9atou t3ajet l lire contact bech hakaka tbadel fil les information mta3ou 
+//w ba3ed tfasa5 el fichier el kol w t3awed t3amrou bel liste chainee
 void edit_contact(FILE *fichier,liste* L){
  printf("edit_contact");
 }
-
+//hathi bech ta5ou el find contact w kan l9atou bech tfas5ou mn liste channe ya3ni el c.prev.next=c.next w ba3ed ta3mel free(c) 
+//w ba3ed tfasa5 el fichier el kol w t3awed t3amrou bel liste chainee
 void delete_contact(FILE *fichier,liste* L){
     cellule *c;
     if (*L == NULL)
