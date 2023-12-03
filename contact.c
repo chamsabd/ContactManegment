@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <unistd.h>
 typedef struct {
 char nom[20];
 int ntlf;
@@ -9,6 +10,7 @@ char* adresse[30];
 char* email[30];
 }contact ;
 typedef struct cellule {
+struct cellule * prev;
 contact val;
 struct cellule * next;
 }cellule ;
@@ -24,11 +26,15 @@ void initialiser_liste(FILE *fichier,liste* L){
     }
 rewind(fichier);
 cellule* c,*parcours;
+cellule* prev;
+prev=NULL;
 while (!feof(fichier)){
 
-c= malloc(sizeof(cellule) );
+c=(cellule *) malloc(sizeof(cellule) );
 fscanf(fichier,"%[^\n-]-%d-%[^\n-]-%[^\n-]\n",c->val.nom,&(c->val.ntlf),c->val.adresse,c->val.email);
             c->next=NULL;
+            c->prev=prev;
+            prev=c;
 if (*L == NULL)
 {
 
@@ -118,15 +124,46 @@ printf("=>contacte ajouter a la liste avec succes \n");
 fclose(fichier);
 }
 
-void search_contact(liste* L){
+cellule* find_contact(liste* L ){
+    int ntlf;
+printf("donner le ntlf du contact a chercher\n");
+scanf("%d",&ntlf);
+}
+
+void search_contact(liste* L ){
 
  printf("search_contact");
 }
 void edit_contact(FILE *fichier,liste* L){
  printf("edit_contact");
 }
+
 void delete_contact(FILE *fichier,liste* L){
- printf("delete_contact");
+    cellule *c;
+    if (*L == NULL)
+{
+printf("fichier devient vide");
+
+
+}
+else
+{
+
+c = *L;
+while ( c->next !=NULL)
+{
+fprintf(fichier,"%s-%d-%s-%s\n",c->val.nom,c->val.ntlf,c->val.adresse,c->val.email);
+
+c = c->next ;
+}
+
+printf("=>contacte supprimer de la liste avec succes \n");
+ }
+
+    fseek(fichier, 0, SEEK_SET);
+
+
+    ftruncate(fileno(fichier), 0);
 }
 int main(){
  FILE *fichier=fopen("contacts.txt", "a+");
