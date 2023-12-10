@@ -31,18 +31,18 @@ rewind(fichier);
 
 cellule* c,*parcours;
 cellule* prev;
-prev=NULL;
+
 while (!feof(fichier)){
 
 c=(cellule *) malloc(sizeof(cellule) );
 if(fscanf(fichier,"%[^\n-]-%d-%[^\n-]-%[^\n-]\n",c->val.nom,&(c->val.ntlf),c->val.adresse,c->val.email)==4){
             c->next=NULL;
-            c->prev=prev;
-            prev=c;
+
+
 
 if (*L == NULL)
 {
-
+ c->prev=NULL;
 *L=c;
 
 }
@@ -55,14 +55,40 @@ while ( parcours->next !=NULL)
 parcours = parcours->next ;
 }
 parcours->next= c ;
-
+ c->prev=parcours;
 
  }
  }
     }
 
 }
+//hathi bech tlawej ala contact 7asm num tlf w traja3ou w jedna * fi type de retour 5ater el contact ili bech traj3ou n7ebou nbadlou fih
+cellule* find_contact(liste* L,int ntlf ){
 
+
+   cellule * parcours;
+if (*L == NULL)
+{
+
+return NULL;
+
+}
+else
+{
+
+parcours = *L;
+
+while (parcours !=NULL  && parcours->val.ntlf!=ntlf)
+{
+
+parcours = parcours->next ;
+
+}
+if(parcours==NULL){
+
+    return NULL;}
+return parcours;
+}}
 //hathi bech taffichi les contact el kol
 void lister_contacts (liste * L){
 cellule * p ;
@@ -88,8 +114,11 @@ int digit_check(char key[])
 }
 
 //hathi bech ta9ra el contact ili 3taha el utilisateur w thabet ili houma s7a7
-void lire_contact(contact * c){
-    char buffer[20];  // Assurez-vous que la taille du tampon est suffisamment grande
+void lire_contact(liste* L,contact * c){
+    char buffer[20];
+   cellule* p;
+   int nb=0;
+    int existe=0;
     do{
             printf("la caractere - n'est pas supporter merci d'eviter\n");
 printf("donner nom (avec longeur sup a 3)\n");
@@ -101,13 +130,20 @@ printf("donner email qui contient @ et . et longeur sup a 5 \n");
 scanf(" %[^\n]",c->email);
 }while(!strchr((char*)c->email,'@') || !strchr((char*)c->email, '.') || strlen((char*)c->email)<5|| strchr((char*)c->email,'-'));
     do{
-
+existe=0;
 printf("donner numero tlf qui contient 8 chiffre\n");
 scanf("%s",buffer);
 if(digit_check(buffer))
-sscanf(buffer, "%d", &c->ntlf);
+sscanf(buffer, "%d",&nb);
+p=find_contact(L,nb);
+if(p!=NULL){
 
-}while(!digit_check(buffer)||strlen(buffer)!=8);
+    printf("number already existe\n");
+    existe=1;
+}
+else
+c->ntlf=nb;
+}while(!digit_check(buffer)||strlen(buffer)!=8|| existe==1);
   do{
 printf("donner adresse avec longeur sup a 5\n");
 scanf(" %[^\n]",c->adresse);
@@ -120,13 +156,15 @@ void ajouter_contact(FILE *fichier,liste* L){
 cellule *c,*parcours;
 c=(cellule*) malloc(sizeof(cellule) );
 printf("-------------New Contact--------------\n");
-lire_contact(&c->val);
+lire_contact(L,&c->val);
+c->next=NULL;
 fprintf(fichier,"%s-%d-%s-%s\n",c->val.nom,c->val.ntlf,c->val.adresse,c->val.email);
 
 if (*L == NULL)
 {
-
+c->prev=NULL;
 *L=c;
+
 
 }
 else
@@ -138,44 +176,20 @@ while ( parcours->next !=NULL)
 parcours = parcours->next ;
 }
 parcours->next= c ;
-printf("contacte enregistrer avec succes \n");
+
+c->prev=parcours;
  }
-
-fclose(fichier);
-}
-//hathi bech tlawej ala contact 7asm num tlf w traja3ou w jedna * fi type de retour 5ater el contact ili bech traj3ou n7ebou nbadlou fih
-cellule* find_contact(liste* L ){
-    int ntlf;
-printf("donner le ntlf du contact a chercher\n");
-scanf("%d",&ntlf);
-
-   cellule * parcours;
-if (*L == NULL)
-{
-
-return NULL;
+printf("contacte enregistrer avec succes \n");
 
 }
-else
-{
 
-parcours = *L;
-
-while (parcours !=NULL  && parcours->val.ntlf!=ntlf)
-{
-
-parcours = parcours->next ;
-
-}
-if(parcours==NULL){
-        printf("ce not found\n");
-    return NULL;}
-return parcours;
-}}
 //hathi bech ta5ou find contact w tafichih kanou mawjoud makanech t9olek contact n'existe pas
 void search_contact(liste* L ){
     cellule* p;
-p=find_contact(L);
+    int ntlf;
+printf("donner le ntlf du contact a chercher\n");
+scanf("%d",&ntlf);
+p=find_contact(L,ntlf);
 if(p==NULL){
     printf("contact dosen't exist\n");
 }else{
@@ -191,11 +205,18 @@ printf("       Nom          \tNumero tf\tAdresse                       \tEmail  
 //w ba3ed tfasa5 el fichier el kol w t3awed t3amrou bel liste chainee
 void edit_contact(FILE *fichier,liste* L){
   cellule* p;
-p=find_contact(L);
+   int ntlf;
+printf("donner le ntlf du contact a chercher\n");
+scanf("%d",&ntlf);
+
+p=find_contact(L,ntlf);
+p->val.ntlf=0;
+printf("%d\n",p->val.ntlf);
+
 if(p==NULL){
     printf("contact dosen't exist\n");
 }else{
-lire_contact(&p->val);
+lire_contact(L,&p->val);
 
     ftruncate(fileno(fichier), 0);
     rewind(fichier);
@@ -222,25 +243,47 @@ printf("contacte modefier avec succes \n");
 //w ba3ed tfasa5 el fichier el kol w t3awed t3amrou bel liste chainee
 void delete_contact(FILE *fichier,liste* L){
    cellule* p;
-p=find_contact(L);
+    int ntlf;
+printf("donner le ntlf du contact a chercher\n");
+scanf("%d",&ntlf);
+p=find_contact(L,ntlf);
 if(p==NULL){
     printf("contact dosen't exist\n");
 }else{
-p->next=p->prev;
 
+
+// Cas 1: p est le premier élément
+    if (p->prev == NULL) {
+        *L = p->next;
+    } else {
+        // Cas 2: p n'est pas le premier élément
+        p->prev->next = p->next;
+    }
+
+    // Cas 3: p est le dernier élément
+    if (p->next != NULL) {
+        p->next->prev = p->prev;
+    }
+
+    // Libérer la mémoire de l'élément supprimé
+    free(p);
+}
+//free(p);
     ftruncate(fileno(fichier), 0);
     rewind(fichier);
-p = *L;
-while ( p!=NULL)
-{
-fprintf(fichier,"%s-%d-%s-%s\n",p->val.nom,p->val.ntlf,p->val.adresse,p->val.email);
 
-p= p->next ;
+cellule* c;
+c = *L;
+while ( c!=NULL)
+{
+fprintf(fichier,"%s-%d-%s-%s\n",c->val.nom,c->val.ntlf,c->val.adresse,c->val.email);
+
+c= c->next ;
 }
-free(p);
+
 
 printf("contacte supprimer avec succes \n");
- }
+
 
 }
 int main(){
@@ -256,6 +299,7 @@ initialiser_liste(fichier,&L);
 int s,q=0;
 char n;
 while(q==0){
+        fichier=fopen("contacts.txt", "a+");
        system("cls");
     printf("**** welcome to contact managment system ****\n");
     printf("                MAIN MENU\n");
@@ -271,15 +315,15 @@ while(q==0){
       scanf("%d",&s);
       switch(s){
          case 1: ajouter_contact(fichier,&L);
-    system("Pause");    system("cls"); break;
+    system("Pause");    system("cls");  fclose(fichier); break;
          case 2:lister_contacts(&L);
-  system("Pause");       system("cls");break;
+  system("Pause");       system("cls");  fclose(fichier);break;
          case 3:search_contact(&L);
-  system("Pause");       system("cls");break;
+  system("Pause");       system("cls"); fclose(fichier); break;
          case 4:edit_contact(fichier,&L);
-   system("Pause");             system("cls"); break;
+   system("Pause");             system("cls"); fclose(fichier); break;
          case 5: delete_contact(fichier,&L);
-    system("Pause");    system("cls"); break;
+    system("Pause");    system("cls"); fclose(fichier); break;
          case 0: q=1; break;
          default : printf("merci de choisir depuis le menu \n");
 
